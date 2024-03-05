@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  nestjs:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '3000:3000'
+    depends_on:
+      - postgres
+    environment:
+      - DATABASE_HOST=postgres
+      - DATABASE_PORT=5432
+      - DATABASE_URL=postgresql://admin:admin@postgres:5432/survivor
+    command: sh -c "npx prisma migrate deploy && npx prisma generate && npm run start"
+
+  postgres:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: survivor
+    ports:
+      - '5432:5432'
